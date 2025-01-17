@@ -1,7 +1,11 @@
 import { fail, type Actions } from '@sveltejs/kit';
-import { writeFileSync } from 'node:fs';
 
 const wesnothRepoDataDirOnMasterBranch = 'https://github.com/wesnoth/wesnoth/blob/master/data/';
+
+async function blobToBase64(blob: Blob) {
+	const buffer = Buffer.from(await blob.arrayBuffer());
+	return buffer.toString('base64');
+}
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -17,7 +21,8 @@ export const actions: Actions = {
 			console.log('ok');
 			if (res.headers.get('Content-Type') !== 'image/png') console.log('something went wrong');
 			const blob = await res.blob();
-			await writeFileSync('test.png', new Uint8Array(await blob.arrayBuffer()));
+			// await writeFileSync('test.png', new Uint8Array(await blob.arrayBuffer()));
+			return { imageBase64: await blobToBase64(blob) };
 		} else {
 			console.log('meh');
 		}

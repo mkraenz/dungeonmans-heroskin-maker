@@ -1,14 +1,18 @@
 <script lang="ts">
-	import { error } from '@sveltejs/kit';
-
 	type Props = {
 		form?: {
 			error?: {
 				description: string;
 			};
+			imageBase64: string;
 		};
 	};
 	let { form }: Props = $props();
+	let image = $derived.by(() => {
+		if (!form?.imageBase64) return '';
+		return `data:image/png;base64, ${form?.imageBase64}`;
+	});
+	$inspect(image);
 	let url = $state('');
 </script>
 
@@ -35,6 +39,10 @@
 			</div>
 		{/if}
 	</form>
+
+	{#if image}
+		<img src={image} alt="loaded img" width="100px" height="100px" />
+	{/if}
 </main>
 
 <style>
