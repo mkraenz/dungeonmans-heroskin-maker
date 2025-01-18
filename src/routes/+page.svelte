@@ -100,7 +100,7 @@
 
 	<p>
 		Disclaimer: Some images are working great, others unfortunately get truncated when resized. So
-		if an image doesn't work, please try another one. It depends on the individual image.
+		if an image doesn't work, please try another one. It very much depends on the individual image.
 	</p>
 
 	{#if form?.imageBase64 && form?.imageName}
@@ -121,26 +121,36 @@
 			</div>
 			<textarea readonly>{toEntityDef(usedName)} </textarea>
 		</div>
-	{/if}
 
-	<h3>How to use?</h3>
-	<p>
-		Save or download the heroskin image to
-		<code>
-			c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\textures\{usedName}.png
-		</code>
-	</p>
-	<p>
-		Download or copy-and-paste the contents of the textfield to
-		<code>
-			c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\heroskins\{usedName}.hero
-		</code>
-	</p>
-	<p>
-		If you'd like to rename the heroskin, you can provide a 'Custom name' at the top. Be sure to
-		update both image and entity def files though.
-	</p>
+		<h3>How to use?</h3>
+		<p>
+			Save or download the heroskin image to
+			<code>
+				c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\textures\{usedName}.png
+			</code>
+		</p>
+		<p>
+			Download or copy-and-paste the contents of the textfield to
+			<code>
+				c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\heroskins\{usedName}.hero
+			</code>
+		</p>
+		<p>
+			If you'd like to rename the heroskin, you can provide a 'Custom name' at the top. Be sure to
+			update both image and entity def files though.
+		</p>
+	{/if}
 </main>
+
+<footer>
+	<p>
+		Created with 💚 by TypeScriptTeatime. Free & Open-Source. <a
+			href="https://github.com/mkraenz/dungeonmans-heroskin-maker"
+			referrerpolicy="no-referrer"
+			target="_blank">GitHub</a
+		>
+	</p>
+</footer>
 
 <style>
 	h1 {
@@ -195,5 +205,12 @@
 	.img-container {
 		display: flex;
 		justify-content: space-between;
+	}
+	footer {
+		margin-top: 2rem;
+	}
+	main {
+		margin-bottom: auto;
+		min-height: 80vh;
 	}
 </style>
