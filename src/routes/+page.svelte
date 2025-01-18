@@ -86,7 +86,7 @@
 		/>
 		<label>
 			Custom name (optional)
-			<input bind:value={customName} name="customName" type="text" placeholder="orkleader" />
+			<input bind:value={customName} name="customName" type="text" placeholder="orcleader" />
 		</label>
 		<div class="submit-button-container"><button type="submit">Make Heroskin</button></div>
 
@@ -97,6 +97,11 @@
 			</div>
 		{/if}
 	</form>
+
+	<p>
+		Disclaimer: Some images are working great, others unfortunately get truncated when resized. So
+		if an image doesn't work, please try another one. It depends on the individual image.
+	</p>
 
 	{#if form?.imageBase64 && form?.imageName}
 		<h2 id="results">Your new Heroskin</h2>
