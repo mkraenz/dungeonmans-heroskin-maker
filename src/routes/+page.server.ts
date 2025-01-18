@@ -18,6 +18,7 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
 		const urlInput = data.get('imageUrl');
+		const customName = data.get('customName');
 		const { valid, ...validationDetails } = validateUrlInput(urlInput);
 		if (!valid) return fail(400, { error: { description: toErrorDescription(validationDetails) } });
 		const fileName = path.parse(`${urlInput}`).name;
@@ -30,7 +31,8 @@ export const actions: Actions = {
 		return {
 			imageBase64: `data:image/png;base64, ${fullHeroSprite.toString('base64')}`,
 			imageName: fileName,
-			imageUrl: urlInput
+			imageUrl: urlInput,
+			customName
 		};
 	}
 };
