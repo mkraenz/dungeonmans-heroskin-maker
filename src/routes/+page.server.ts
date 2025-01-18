@@ -61,7 +61,8 @@ async function generateHeroSprite(blob: Blob) {
 			width: 80,
 			height: 128,
 			position: sharp.gravity.south,
-			background: transparentColor
+			background: transparentColor,
+			kernel: 'nearest'
 		})
 		.affine([1, 0, 0, 1], { ody: 10, background: transparentColor });
 	// .extend({
