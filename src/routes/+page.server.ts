@@ -4,6 +4,7 @@ import sharp from 'sharp';
 
 const wesnothRepoDataDirOnMasterBranch = 'https://github.com/wesnoth/wesnoth/blob/master/data/';
 const transparentColor = { r: 0, g: 0, b: 0, alpha: 0 };
+const dmansTargetDimension = { x: 80, y: 128 };
 
 const fail500 = () =>
 	fail(500, {
@@ -53,6 +54,7 @@ const validateUrlInput = (input: unknown) => {
 
 async function generateHeroSprite(blob: Blob) {
 	const tiny = await sharp(await blob.arrayBuffer()).flop();
+	// const imgMeta = await tiny.metadata();
 	const resizedImg = await sharp(await blob.arrayBuffer())
 		.flop()
 		.resize({
@@ -60,15 +62,22 @@ async function generateHeroSprite(blob: Blob) {
 			height: 128,
 			position: sharp.gravity.south,
 			background: transparentColor
-		});
+		})
+		.affine([1, 0, 0, 1], { ody: 10, background: transparentColor });
+	// .extend({
+	// 	top: dmansTargetDimension.y - (imgMeta.height ?? 0),
+	// 	left: Math.floor((dmansTargetDimension.x - (imgMeta.width ?? 0)) / 2),
+	// 	right: Math.ceil((dmansTargetDimension.x - (imgMeta.width ?? 0)) / 2),
+	// 	background: transparentColor
+	// });
 	const fullHeroSprite = await resizedImg
 		.clone()
 		.extend({ right: 80 * 4, background: transparentColor })
 		.composite([
 			// overworld image
-			{ top: 40, left: 1 * 80 + 10, input: await tiny.toBuffer() },
+			{ top: 55, left: 1 * 80, input: await tiny.toBuffer() },
 			// overworld in grass
-			{ top: 40, left: 2 * 80 + 10, input: await tiny.toBuffer() },
+			{ top: 55, left: 2 * 80, input: await tiny.toBuffer() },
 			// statue after death
 			{
 				top: 0,
