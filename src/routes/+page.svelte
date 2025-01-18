@@ -22,7 +22,7 @@
 	name "${name}"
 	texturename textures/${name}_sprite
 
-	devname "The Battle for Wesnoth ${form?.imageUrl ?? ''} - Please respect the applicable image licenses. See https://wiki.wesnoth.org/Wesnoth:Copyrights"
+	devname "The Battle for Wesnoth ${form?.imageUrl ?? ''} - Please respect the applicable image licenses. See https://wiki.wesnoth.org/Wesnoth:Copyrights. Generated using https://dungeonmans-heroskin-maker.kraenz.eu"
 	
 	width 80
 	height 128
@@ -167,7 +167,8 @@
 		border: 1px solid red;
 	}
 	textarea {
-		height: 600px;
+		min-height: 600px;
+		field-sizing: content; /** working in chrome but not in firefox or safari. https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing */
 	}
 	.url-label-container {
 		display: flex;
