@@ -11,10 +11,7 @@
 		};
 	};
 	let { form }: Props = $props();
-	let url = $state(
-		form?.imageUrl ??
-			'https://github.com/wesnoth/wesnoth/blob/master/data/core/images/units/orcs/leader.png'
-	);
+	let url = $state(form?.imageUrl ?? '');
 	let customName = $state(form?.customName ?? '');
 	let copiedEntityDef = $state(false);
 	let usedName = $derived(customName || form?.imageName || '');
