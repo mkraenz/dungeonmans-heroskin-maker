@@ -1,4 +1,5 @@
 import { fail, type Actions } from '@sveltejs/kit';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
@@ -16,21 +17,23 @@ const fail500 = () =>
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const data = await request.formData();
-		const urlInput = data.get('imageUrl');
-		const customName = data.get('customName');
+		const { urlInput, customName } = await extractInput(request);
 		const { valid, ...validationDetails } = validateUrlInput(urlInput);
 		if (!valid) return fail(400, { error: { description: toErrorDescription(validationDetails) } });
-		const fileName = path.parse(`${urlInput}`).name;
 
-		const rawPng = `${urlInput}?raw=true`;
-		const res = await fetch(rawPng);
+		const res = await fetch(`${urlInput}?raw=true`);
 		if (!res.ok) return fail500();
 		const blob = await res.blob();
-		const fullHeroSprite = await generateHeroSprite(blob);
+		// const blob = new Blob([readFileSync('data/delete-me.png')]);
+		const fullHeroSprite = await generateHeroSprite({
+			blob: Buffer.from(await blob.arrayBuffer()),
+			grass: readFileSync('data/grass.png'),
+			grassMask: readFileSync('data/grass-mask.png'),
+			empty: readFileSync('data/empty.png')
+		});
 		return {
 			imageBase64: `data:image/png;base64, ${fullHeroSprite.toString('base64')}`,
-			imageName: fileName,
+			imageName: path.parse(`${urlInput}`).name,
 			imageUrl: urlInput,
 			customName
 		};
@@ -54,10 +57,26 @@ const validateUrlInput = (input: unknown) => {
 	return { valid: true };
 };
 
-async function generateHeroSprite(blob: Blob) {
-	const tiny = await sharp(await blob.arrayBuffer()).flop();
-	// const imgMeta = await tiny.metadata();
-	const resizedImg = await sharp(await blob.arrayBuffer())
+async function extractInput(request: Request) {
+	const data = await request.formData();
+	const urlInput = data.get('imageUrl');
+	const customName = data.get('customName');
+	return { urlInput, customName };
+}
+
+async function generateHeroSprite({
+	blob,
+	grass,
+	grassMask,
+	empty
+}: {
+	blob: Buffer;
+	grass: Buffer;
+	grassMask: Buffer;
+	empty: Buffer;
+}) {
+	const tiny = await sharp(blob).flop();
+	const resizedImg = await sharp(blob)
 		.flop()
 		.resize({
 			width: 80,
@@ -67,12 +86,14 @@ async function generateHeroSprite(blob: Blob) {
 			kernel: 'nearest'
 		})
 		.affine([1, 0, 0, 1], { ody: 10, background: transparentColor });
-	// .extend({
-	// 	top: dmansTargetDimension.y - (imgMeta.height ?? 0),
-	// 	left: Math.floor((dmansTargetDimension.x - (imgMeta.width ?? 0)) / 2),
-	// 	right: Math.ceil((dmansTargetDimension.x - (imgMeta.width ?? 0)) / 2),
-	// 	background: transparentColor
-	// });
+
+	const overworldGrassA = await sharp(empty)
+		.composite([{ top: 55, left: 0, input: await tiny.toBuffer() }])
+		.boolean(grassMask, 'and')
+		.toBuffer();
+	const overworldGrass = await sharp(overworldGrassA).composite([
+		{ top: 0, left: 0, input: grass }
+	]);
 	const fullHeroSprite = await resizedImg
 		.clone()
 		.extend({ right: 80 * 4, background: transparentColor })
@@ -80,7 +101,7 @@ async function generateHeroSprite(blob: Blob) {
 			// overworld image
 			{ top: 55, left: 1 * 80, input: await tiny.toBuffer() },
 			// overworld in grass
-			{ top: 55, left: 2 * 80, input: await tiny.toBuffer() },
+			{ top: 0, left: 2 * 80, input: await overworldGrass.toBuffer() },
 			// statue after death
 			{
 				top: 0,
