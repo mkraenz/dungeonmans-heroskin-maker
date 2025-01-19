@@ -65,80 +65,112 @@
 <main>
 	<h1>Dungeonmans Heroskin Maker</h1>
 
-	<form method="POST">
-		<div class="url-label-container">
-			<label for="imageUrl" class="url-label">GitHub URL to Wesnoth unit image</label>
-			<a
-				class="left"
-				href="https://github.com/wesnoth/wesnoth/blob/master/data/core/images/units/"
-				target="_blank"
-				referrerpolicy="no-referrer">Browse Wesnoth core units</a
-			>
-		</div>
-
-		<input
-			bind:value={url}
-			name="imageUrl"
-			id="imageUrl"
-			type="text"
-			placeholder="https://github.com/wesnoth/wesnoth/blob/master/data/core/images/units/orcs/leader.png"
-			required
-		/>
-		<label>
-			Custom name (optional)
-			<input bind:value={customName} name="customName" type="text" placeholder="orcleader" />
-		</label>
-		<div class="submit-button-container"><button type="submit">Make Heroskin</button></div>
-
-		{#if form?.error}
-			<div class="error">
-				<h6>Error</h6>
-				<p>{form?.error?.description}</p>
+	<section>
+		<form method="POST">
+			<div class="url-label-container">
+				<label for="imageUrl" class="url-label">GitHub URL to Wesnoth unit image</label>
+				<a
+					class="left"
+					href="https://github.com/wesnoth/wesnoth/blob/master/data/core/images/units/"
+					target="_blank"
+					referrerpolicy="no-referrer">Browse Wesnoth core units</a
+				>
 			</div>
-		{/if}
-	</form>
 
-	<p>
-		Disclaimer: Some images are working great, others unfortunately get truncated when resized. So
-		if an image doesn't work, please try another one. It very much depends on the individual image.
-	</p>
+			<input
+				bind:value={url}
+				name="imageUrl"
+				id="imageUrl"
+				type="text"
+				placeholder="https://github.com/wesnoth/wesnoth/blob/master/data/core/images/units/orcs/leader.png"
+				required
+			/>
+			<label>
+				Custom name (optional)
+				<input bind:value={customName} name="customName" type="text" placeholder="orcleader" />
+			</label>
+			<div class="submit-button-container"><button type="submit">Make Heroskin</button></div>
+
+			{#if form?.error}
+				<div class="error">
+					<h6>Error</h6>
+					<p>{form?.error?.description}</p>
+				</div>
+			{/if}
+		</form>
+
+		<p>
+			Disclaimer: Some images are working great, others unfortunately get truncated when resized. So
+			if an image doesn't work, please try another one. It very much depends on the individual
+			image.
+		</p>
+	</section>
 
 	{#if form?.imageBase64 && form?.imageName}
-		<h2 id="results">Your new Heroskin</h2>
-		<div class="img-container">
-			<img src={form.imageBase64} alt="heroskin" />
-			<div class="download-img-btn-container">
-				<button onclick={downloadImage} class="outline download-img-btn">Download</button>
+		<section>
+			<h2 id="results">Your new Heroskin</h2>
+			<div class="img-container">
+				<img src={form.imageBase64} alt="heroskin" />
+				<div class="download-img-btn-container">
+					<button onclick={downloadImage} class="outline download-img-btn">Download</button>
+				</div>
 			</div>
-		</div>
 
-		<div class="entitydef-container">
-			<div class="entitydef-buttons">
-				<button class="outline entitydef-copy-btn" onclick={copyEntityDefToClipboard}
-					>{#if copiedEntityDef}Copied 👍{:else}Copy{/if}</button
+			<div class="entitydef-container">
+				<div class="entitydef-buttons">
+					<button class="outline entitydef-copy-btn" onclick={copyEntityDefToClipboard}
+						>{#if copiedEntityDef}Copied 👍{:else}Copy{/if}</button
+					>
+					<button class="outline entitydef-download-btn" onclick={downloadEntityDef}
+						>Download</button
+					>
+				</div>
+				<textarea readonly>{toEntityDef(usedName)} </textarea>
+			</div>
+		</section>
+
+		<section>
+			<h3>How to use?</h3>
+			<p>
+				Save or download the heroskin image to
+				<code>
+					c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\textures\{usedName}.png
+				</code>
+			</p>
+			<p>
+				Download or copy-and-paste the contents of the textfield to
+				<code>
+					c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\heroskins\{usedName}.hero
+				</code>
+			</p>
+			<p>
+				If you'd like to rename the heroskin, you can provide a 'Custom name' at the top. Be sure to
+				update both image and entity def files though.
+			</p>
+		</section>
+
+		<section>
+			<h3>Colors</h3>
+			<p>
+				The pink colors inside the Wesnoth sprites are designed to be replaced by other colors. To
+				learn how, check
+				<a
+					href="https://wiki.wesnoth.org/TeamColoring"
+					referrerpolicy="no-referrer"
+					target="_blank"
 				>
-				<button class="outline entitydef-download-btn" onclick={downloadEntityDef}>Download</button>
-			</div>
-			<textarea readonly>{toEntityDef(usedName)} </textarea>
-		</div>
-
-		<h3>How to use?</h3>
-		<p>
-			Save or download the heroskin image to
-			<code>
-				c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\textures\{usedName}.png
-			</code>
-		</p>
-		<p>
-			Download or copy-and-paste the contents of the textfield to
-			<code>
-				c:\users\YOUR_USERNAME\appdata\roaming\Dungeonmans\modcontent\heroskins\{usedName}.hero
-			</code>
-		</p>
-		<p>
-			If you'd like to rename the heroskin, you can provide a 'Custom name' at the top. Be sure to
-			update both image and entity def files though.
-		</p>
+					Wesnoth Wiki - Team Coloring</a
+				>. You can find the TeamColoring script
+				<a
+					href="https://github.com/wesnoth/wesnoth/tree/master/data/tools"
+					referrerpolicy="no-referrer"
+					target="_blank"
+				>
+					here
+				</a>
+				on GithHub. If I'm not mistaken you should be able to apply the script to the heroskin PNG.
+			</p>
+		</section>
 	{/if}
 </main>
 
