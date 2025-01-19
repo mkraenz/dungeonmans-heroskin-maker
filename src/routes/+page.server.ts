@@ -27,9 +27,9 @@ export const actions: Actions = {
 		// const blob = new Blob([readFileSync('data/delete-me.png')]);
 		const fullHeroSprite = await generateHeroSprite({
 			blob: Buffer.from(await blob.arrayBuffer()),
-			grass: readFileSync('data/grass.png'),
-			grassMask: readFileSync('data/grass-mask.png'),
-			empty: readFileSync('data/empty.png')
+			grass: readDataFileSync('data/grass.png'),
+			grassMask: readDataFileSync('data/grass-mask.png'),
+			empty: readDataFileSync('data/empty.png')
 		});
 		return {
 			imageBase64: `data:image/png;base64, ${fullHeroSprite.toString('base64')}`,
@@ -56,6 +56,10 @@ const validateUrlInput = (input: unknown) => {
 		};
 	return { valid: true };
 };
+
+function readDataFileSync(filepath: string): Buffer<ArrayBufferLike> {
+	return readFileSync(path.join(process.cwd(), filepath));
+}
 
 async function extractInput(request: Request) {
 	const data = await request.formData();
