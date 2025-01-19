@@ -1,7 +1,10 @@
+import { read } from '$app/server';
 import { fail, type Actions } from '@sveltejs/kit';
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
+import emptyPng from './data/empty.png';
+import grassMaskPng from './data/grass-mask.png';
+import grassPng from './data/grass.png';
 
 const wesnothRepoDataDirOnMasterBranch = 'https://github.com/wesnoth/wesnoth/blob/master/data/';
 const transparentColor = { r: 0, g: 0, b: 0, alpha: 0 };
@@ -27,9 +30,9 @@ export const actions: Actions = {
 		// const blob = new Blob([readFileSync('data/delete-me.png')]);
 		const fullHeroSprite = await generateHeroSprite({
 			blob: Buffer.from(await blob.arrayBuffer()),
-			grass: readDataFileSync('data/grass.png'),
-			grassMask: readDataFileSync('data/grass-mask.png'),
-			empty: readDataFileSync('data/empty.png')
+			grass: await readDataFile(grassPng),
+			grassMask: await readDataFile(grassMaskPng),
+			empty: await readDataFile(emptyPng)
 		});
 		return {
 			imageBase64: `data:image/png;base64, ${fullHeroSprite.toString('base64')}`,
@@ -57,8 +60,8 @@ const validateUrlInput = (input: unknown) => {
 	return { valid: true };
 };
 
-function readDataFileSync(filepath: string): Buffer<ArrayBufferLike> {
-	return readFileSync(path.join(process.cwd(), filepath));
+async function readDataFile(file: string) {
+	return Buffer.from(await read(file).arrayBuffer());
 }
 
 async function extractInput(request: Request) {
